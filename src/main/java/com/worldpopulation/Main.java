@@ -1,7 +1,7 @@
 package com.worldpopulation;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
+import java.sql.*;
+import java.util.ArrayList;
 
 /**
  * Class Name : Main
@@ -10,7 +10,10 @@ import java.sql.DriverManager;
  * Description: Collection Test
  */
 
-// fetch lok p yin pull swl if there are files in git hub
+    // fetch lok p yin pull swl if there are files in github
+    //commit lok dh failed b error tt yin thu pyy htr dk sentence 2 kyg gko terminal htl mhr htae
+    //commit p yin push -> login pho lo yin authorized lok pyy lyk
+    //branch kwl p yin push
 
 public class Main {
     /*
@@ -35,11 +38,38 @@ public class Main {
         return conn;
     }
 
+    protected ArrayList<Country> read_DB(Connection conn) {
+        ArrayList<Country> countrylist = new ArrayList<>();
+        try {
+            PreparedStatement stat = conn.prepareStatement("SELECT country_name, capital_name," +
+                    "region_name, sub_region_name FROM population");
+            ResultSet rs = stat.executeQuery();
+            while (rs.next()) { //record dwy gko pointer htuk p dk true pyn dk function
+                countrylist.add(new Country(rs.getString(1), rs.getString(2),
+                        rs.getString(3), rs.getString(4)));
+            }
+            rs.close();
+            stat.close();
+
+        } catch (Exception e){
+            e.printStackTrace();
+        }
+
+        return countrylist;
+    }
+
 
 
     public static void main(String[] args) {
         Main m = new Main();
         Connection conn = m.getConnection("localhost", 3306, "world_population", "root", "");
+        ArrayList<Country> countrylist = m.read_DB(conn);
+        System.out.println(countrylist.getLast());
 
+        try {
+            conn.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 }
